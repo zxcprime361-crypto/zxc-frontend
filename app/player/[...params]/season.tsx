@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronDown } from "lucide-react";
 import clsx from "clsx";
-import { MovieTypes } from "@/hook/movie-by-id";
+import { MovieTypes } from "@/types/movie-by-id";
 
 export default function SeasonPopover({
   metadata,

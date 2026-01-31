@@ -218,7 +218,7 @@ export default function Episodes({
                                       month: "short",
                                       day: "numeric",
                                       year: "numeric",
-                                    }
+                                    },
                                   )}
                                 </span>
                               )}
