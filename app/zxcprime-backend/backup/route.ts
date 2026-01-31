@@ -10,11 +10,11 @@ export async function GET(req: NextRequest) {
   if (
     !referer.includes("/api/") &&
     !referer.includes("localhost") &&
-    !referer.includes("https://www.zxcstream.xyz/")
+    !referer.includes("https://www.zxcprime.icu/")
   ) {
     return NextResponse.json(
       { success: false, error: "Forbidden" },
-      { status: 403 }
+      { status: 403 },
     );
   }
 
@@ -33,14 +33,14 @@ export async function GET(req: NextRequest) {
     if (!season || !episode) {
       return NextResponse.json(
         { error: "TV type requires season and episode" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     url = `https://embed.wplay.me/r/tv/${id}/${season}/${episode}?site=2&type=1`;
   } else {
     return NextResponse.json(
       { error: "Invalid type: must be movie or tv" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
