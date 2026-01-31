@@ -110,8 +110,9 @@ export async function GET(req: NextRequest) {
     );
 
     const proxies = [
-      "https://billowing-king-b723.jerometecson33.workers.dev/",
       "https://square-darkness-1efb.amenohabakiri174.workers.dev/",
+      "https://billowing-king-b723.jerometecson33.workers.dev/",
+
       "https://snowy-recipe-f96e.jerometecson000.workers.dev/",
       "https://damp-bonus-5625.mosangfour.workers.dev/",
       "https://morning-unit-723b.jinluxus303.workers.dev/",

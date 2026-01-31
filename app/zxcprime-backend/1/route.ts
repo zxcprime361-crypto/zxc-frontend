@@ -117,11 +117,12 @@ export async function GET(req: NextRequest) {
     }
     const finalM3u8Url = finalM3u8.url;
     const proxies = [
+      "https://square-darkness-1efb.amenohabakiri174.workers.dev/",
       "https://damp-bonus-5625.mosangfour.workers.dev/",
       "https://morning-unit-723b.jinluxus303.workers.dev/",
       "https://damp-bird-f3a9.jerometecsonn.workers.dev/",
       "https://billowing-king-b723.jerometecson33.workers.dev/",
-      "https://square-darkness-1efb.amenohabakiri174.workers.dev/",
+
       "https://snowy-recipe-f96e.jerometecson000.workers.dev/",
     ];
 
