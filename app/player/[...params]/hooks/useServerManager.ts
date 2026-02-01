@@ -42,19 +42,19 @@ export function useServerManager({
 
     {
       name: "Thanatos II",
-      server: 2,
+      server: 1,
       status: "queue",
       desc: "",
     },
     {
       name: "Aether III",
-      server: 3,
+      server: 2,
       status: "queue",
       desc: "",
     },
     {
       name: "Orion (4K) IV",
-      server: 1,
+      server: 3,
       status: "queue",
       desc: "",
     },
