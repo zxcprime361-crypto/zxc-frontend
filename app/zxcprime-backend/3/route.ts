@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
         headers: {
           "User-Agent":
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
-          Referer: "https://player.videasy.net/",
+          Referer: "https://api.videasy.net/",
         },
       },
       5000,
