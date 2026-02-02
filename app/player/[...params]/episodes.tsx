@@ -141,7 +141,7 @@ export default function Episodes({
                         <Link
                           key={e.id}
                           className="group relative overflow-hidden py-6 px-2"
-                          href={`/player/tv/${id}/${selectSeason}/${
+                          href={`/watch/tv/${id}/${selectSeason}/${
                             e.episode_number
                           }${params.toString() ? `?${params.toString()}` : ""}`}
                           ref={
