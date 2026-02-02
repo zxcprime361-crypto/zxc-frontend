@@ -37,6 +37,7 @@ export function useVideoPlayer({
       ? makeKey("movie", id)
       : makeKey("tv", id, season, episode);
   const restoredRef = useRef(false);
+  console.log("eeeeeeeeee", isEnded);
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
