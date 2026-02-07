@@ -43,11 +43,14 @@ export async function GET(req: NextRequest) {
     if (
       !referer.includes("/api/") &&
       !referer.includes("localhost") &&
-      !referer.includes("http://192.168.1.6:3000/") &&
-      !referer.includes("https://www.zxcprime.icu/")
+      !referer.includes("http://192.168.1.4:3000/") &&
+      !referer.includes("https://www.zxcprime.icu/") &&
+      !referer.includes("https://zxcprime.icu/") &&
+      !referer.includes("https://www.zxcprime.site/") &&
+      !referer.includes("https://zxcprime.site/")
     ) {
       return NextResponse.json(
-        { success: true, type: "hls", link: "www.zxcprime.icu" },
+        { success: false, error: "Forbidden" },
         { status: 403 },
       );
     }

@@ -158,7 +158,7 @@ export async function GET(req: NextRequest) {
         { status: 502 },
       );
     }
-    const proxiedUrl = `${workingProxy}?url=${videoUrl}`;
+    const proxiedUrl = `${workingProxy}?url=${encodeURIComponent(videoUrl)}`;
     return NextResponse.json({
       success: true,
       link: proxiedUrl,
@@ -200,7 +200,7 @@ const africanIPs = [
 export async function getWorkingProxy(url: string, proxies: string[]) {
   for (const proxy of proxies) {
     try {
-      const testUrl = `${proxy}?m3u8-proxy=${url}`;
+      const testUrl = `${proxy}?url=${encodeURIComponent(url)}`;
       const res = await fetchWithTimeout(
         testUrl,
         {
@@ -212,9 +212,7 @@ export async function getWorkingProxy(url: string, proxies: string[]) {
         3000,
       );
       if (res.ok) return proxy;
-    } catch (e) {
-      // ignore failed proxy
-    }
+    } catch (e) {}
   }
   return null;
 }
