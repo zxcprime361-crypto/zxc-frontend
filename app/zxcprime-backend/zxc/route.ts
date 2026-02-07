@@ -33,7 +33,6 @@ export async function GET(req: NextRequest) {
     if (
       !referer.includes("/api/") &&
       !referer.includes("localhost") &&
-      !referer.includes("zxcprime-icu.netlify.app") &&
       !referer.includes("http://192.168.1.4:3000/") &&
       !referer.includes("https://www.zxcprime.icu/") &&
       !referer.includes("https://zxcprime.icu/") &&
@@ -92,7 +91,7 @@ export async function GET(req: NextRequest) {
       contentType.includes("mpegurl") || target.endsWith(".m3u8");
 
     const corsHeaders = {
-      "Access-Control-Allow-Origin": req.nextUrl.origin,
+      "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, OPTIONS",
       "Access-Control-Allow-Headers": "*",
     };
