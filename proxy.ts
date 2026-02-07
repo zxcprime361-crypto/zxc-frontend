@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 const allowedReferers = [
   "http://localhost:3000/",
-
+  "https://www.zxcprime.icu/",
+  "https://zxcprime.icu/",
   "https://www.zxcprime.site/",
   "https://zxcprime.site/",
 ];
