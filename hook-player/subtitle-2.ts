@@ -18,7 +18,8 @@ export function useVdrkSubtitle({
     queryKey: ["vdrksubs", tmdbId, season, episode],
     queryFn: async () => {
       const { data } = await axios.get(
-        `https://sub.vdrk.site/v1/${media_type}/${tmdbId}${media_type === "tv" ? `/${season}/${episode}` : ""}`,
+        `
+https://sub.wyzie.ru/search?id=${tmdbId}&format=srt${media_type === "tv" ? `&season=${season}&episode=${episode}` : ""}`,
       );
       data.sort((a: Subtitle, b: Subtitle) => a.label.localeCompare(b.label));
 
