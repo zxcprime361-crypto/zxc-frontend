@@ -20,15 +20,16 @@ export default function Home() {
   const custom_list = useMemo(() => {
     return shuffleArray([
       {
-        id: 575604,
-        media_type: "movie",
-        custom_image: "/vo9tOxLlIHSVQgVt1auI6ndRIQj.jpg",
+        id: 240382,
+        media_type: "tv",
+        custom_image: "",
         custom_logo: "",
       },
+
       {
         id: 1062722,
         media_type: "movie",
-        custom_image: "/hpXBJxLD2SEf8l2CspmSeiHrBKX.jpg",
+        custom_image: "/uALGYsvHpRb8ABCvsu9f8Z7BKi7.jpg",
         custom_logo: "",
       },
       {
@@ -52,7 +53,7 @@ export default function Home() {
       {
         id: 1242898,
         media_type: "movie",
-        custom_image: "/7hDFhV4ng4cHgSnxvO0MIb11Sbp.jpg",
+        custom_image: "/kWyc8n6tmST0Uedxlg7WGIoBWTU.jpg",
         custom_logo: "",
       },
       { id: 803796, media_type: "movie", custom_image: "", custom_logo: "" },

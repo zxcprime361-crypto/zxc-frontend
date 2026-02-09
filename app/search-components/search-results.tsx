@@ -69,9 +69,7 @@ export default function SearchResult() {
   const isKeyword = media_type === "keyword";
   const resultsLength = results.length === 0;
   const items = isKeyword ? results_discover : results;
-  const filtered = items.filter(
-    (x) => x.poster_path && x.vote_average > 1 && x.vote_count > 10,
-  );
+  const filtered = items.filter((x) => x.poster_path && x.vote_average > 1);
   const isLoadingItems = isKeyword ? isLoading_discover : isLoading;
   const isFetchingMore = isKeyword
     ? isFetchingNextPage_discover
