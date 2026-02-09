@@ -7,9 +7,27 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tailspin } from "ldrs/react";
+import "ldrs/react/Tailspin.css";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { IMAGE_BASE_URL } from "@/constants/tmdb";
 import { useLastPlayed } from "@/store/now-playing-store";
-import { Play, Square, TextSearch } from "lucide-react";
+import { Download, Play, Square, TextSearch } from "lucide-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Recommendations from "./recommendations";
@@ -28,9 +46,13 @@ import { MediaSkeleton } from "./skeleton";
 import Link from "next/link";
 import WatchlistButton from "@/app/watchlist/watchlist-button";
 import { useAdLinkStore } from "@/store/ad-store";
+import useDownload from "@/hook-player/download";
+import { Badge } from "@/components/ui/badge";
 export default function ModalDetails() {
   const searchParams = useSearchParams();
   const openAd = useAdLinkStore((s) => s.openAd);
+  const [seasonDownload, setSeasonDownload] = useState<number | null>(null);
+  const [episodeDownload, setEpisodeDownload] = useState<number | null>(null);
 
   const paramsObject = Object.fromEntries(searchParams.entries());
   const [open, setOpen] = useState(true);
@@ -91,11 +113,23 @@ export default function ModalDetails() {
       });
     }
   }, [data]);
-
+  const imdbId = data?.external_ids.imdb_id || null;
   const title = data?.title || data?.name || "";
   const backdrop =
     data?.images.backdrops.find((f) => f.iso_639_1 === "en")?.file_path || "";
   const year = data?.first_air_date || data?.release_date || "";
+  const { data: download, isLoading } = useDownload({
+    media_type,
+    id,
+    season: seasonDownload,
+    episode: episodeDownload,
+    imdbId,
+    title,
+    year,
+  });
+  const selectedSeason =
+    media_type === "tv" &&
+    data?.seasons.find((s) => s.season_number === seasonDownload);
   return (
     <Drawer open={open} onOpenChange={(value) => handleCloseDrawer(value)}>
       <DrawerContent className=" outline-none">
@@ -195,6 +229,197 @@ export default function ModalDetails() {
                         : "Play Now"}
                     </Link>
                   </Button>
+
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button size="xl" variant="outline">
+                        <Download />
+                        Download
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent align="start" className="mt-3">
+                      <PopoverHeader>
+                        <PopoverTitle>Download {title}</PopoverTitle>
+                        <PopoverDescription>
+                          Select a quality you want to download
+                        </PopoverDescription>
+                      </PopoverHeader>
+
+                      {media_type === "tv" && (
+                        <div className="mt-5 space-y-3">
+                          <div className="flex justify-between items-center">
+                            <h1 className="text-sm text-muted-foreground font-medium">
+                              Select Season
+                            </h1>
+                            <Select
+                              value={seasonDownload?.toString()}
+                              onValueChange={(value) => {
+                                const season = Number(value);
+                                setSeasonDownload(season);
+                                setEpisodeDownload(null); // reset episode
+                              }}
+                            >
+                              <SelectTrigger className="">
+                                <SelectValue placeholder="Select season" />
+                              </SelectTrigger>
+
+                              <SelectContent>
+                                <SelectGroup>
+                                  {data.seasons.map((s) => (
+                                    <SelectItem
+                                      key={s.id}
+                                      value={s.season_number.toString()}
+                                    >
+                                      {s.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {seasonDownload !== null && selectedSeason && (
+                            <div className="space-y-1.5">
+                              <h1 className="text-sm text-muted-foreground font-medium">
+                                Select Episode
+                              </h1>
+                              <div className="flex gap-1 flex-wrap">
+                                {Array.from(
+                                  { length: selectedSeason.episode_count },
+                                  (_, i) => (
+                                    <Button
+                                      key={i}
+                                      className="flex-1"
+                                      variant={
+                                        episodeDownload === i + 1
+                                          ? "destructive"
+                                          : "secondary"
+                                      }
+                                      onClick={() => setEpisodeDownload(i + 1)}
+                                    >
+                                      Episode {i + 1}
+                                    </Button>
+                                  ),
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {media_type === "tv" ? (
+                        seasonDownload === null || episodeDownload === null ? (
+                          <div className="flex justify-center items-center p-8">
+                            <p className="text-sm text-muted-foreground">
+                              Downloads will show here.
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="mt-5">
+                            <h1 className="text-sm font-medium">
+                              Season {seasonDownload} Episode {episodeDownload}
+                            </h1>
+                            <div className="divide-y">
+                              {isLoading ? (
+                                <div className="flex justify-center items-center p-8">
+                                  <Tailspin
+                                    size="30"
+                                    stroke="5"
+                                    speed="0.9"
+                                    color="white"
+                                  />
+                                </div>
+                              ) : !download ? (
+                                <div className="flex justify-center items-center p-8">
+                                  <p className="text-sm text-muted-foreground">
+                                    No download links available
+                                  </p>
+                                </div>
+                              ) : (
+                                download?.links.map((d) => (
+                                  <div
+                                    className="flex justify-between items-center py-3"
+                                    key={d.id}
+                                  >
+                                    <div>
+                                      <span className="space-y-1">
+                                        <span className="flex gap-2 items-center">
+                                          <Badge variant="secondary">
+                                            {formatBytes(Number(d.size))}
+                                          </Badge>
+                                          <h1 className="text-sm font-medium">
+                                            {d.resolution}p
+                                          </h1>
+                                        </span>
+                                        <p className="text-sm text-muted-foreground">
+                                          {title}.mp4
+                                        </p>
+                                      </span>
+                                    </div>
+
+                                    <Button asChild variant="outline">
+                                      <Link href={d.url}>
+                                        <Download />
+                                      </Link>
+                                    </Button>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </div>
+                        )
+                      ) : (
+                        <div className=" mt-5 divide-y">
+                          {isLoading ? (
+                            <div className="flex justify-center items-center p-8">
+                              <Tailspin
+                                size="30"
+                                stroke="5"
+                                speed="0.9"
+                                color="white"
+                              />
+                            </div>
+                          ) : !download ? (
+                            <div className="flex justify-center items-center p-8">
+                              <p className="text-sm text-muted-foreground">
+                                No download links available
+                              </p>
+                            </div>
+                          ) : (
+                            download?.links.map((d) => (
+                              <div
+                                className="flex justify-between items-center py-3"
+                                key={d.id}
+                              >
+                                <div>
+                                  <span className="space-y-1">
+                                    <span className="flex gap-2 items-center">
+                                      <Badge variant="secondary">
+                                        {formatBytes(Number(d.size))}
+                                      </Badge>
+                                      <h1 className="text-sm font-medium">
+                                        {d.resolution}p
+                                      </h1>
+                                    </span>
+                                    <p className="text-sm text-muted-foreground">
+                                      {title}.mp4
+                                    </p>
+                                  </span>
+                                </div>
+
+                                <Button asChild variant="outline">
+                                  <Link href={d.url}>
+                                    <Download />
+                                  </Link>
+                                </Button>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+
                   <WatchlistButton movie={data} media_type={media_type} />
                 </div>
               </div>
@@ -286,4 +511,11 @@ export default function ModalDetails() {
       </DrawerContent>
     </Drawer>
   );
+}
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
 }

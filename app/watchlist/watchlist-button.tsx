@@ -2,7 +2,7 @@ import { MovieTypes } from "@/types/movie-by-id";
 import { useWatchlistStore } from "./useWatchlist";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus } from "lucide-react";
+import { Check, Minus, Plus } from "lucide-react";
 
 export default function WatchlistButton({
   movie,
@@ -39,9 +39,12 @@ export default function WatchlistButton({
   };
 
   return (
-    <Button size="xl" variant="outline" onClick={handleClick}>
-      {inWatchlist ? <Minus strokeWidth={2} /> : <Plus strokeWidth={2} />}
-      {inWatchlist ? "In Watchlist" : "Add to Watchlist"}
+    <Button
+      className="size-12 rounded-full"
+      variant="outline"
+      onClick={handleClick}
+    >
+      {inWatchlist ? <Check strokeWidth={2} /> : <Plus strokeWidth={2} />}
     </Button>
   );
 }

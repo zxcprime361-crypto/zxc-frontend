@@ -85,9 +85,12 @@ export default function ReusableSwiper({
       </div>
       <div className="flex items-center">
         <Separator className="flex-1" />
-        <p className=" text-muted-foreground font-medium px-15 hover:underline cursor-pointer">
-          Browse {displayName} {media_type === "movie" ? "Movies" : "TV Shows"}
-        </p>
+        <Link href={`/browse/${id}`}>
+          <p className=" text-muted-foreground font-medium px-15 hover:underline cursor-pointer flex items-center gap-2">
+            {displayName} {media_type === "movie" ? "Movies" : "TV Shows"}{" "}
+            <ExternalLink className="size-4.5" />
+          </p>
+        </Link>
         <Separator className="flex-1" />
       </div>
     </div>

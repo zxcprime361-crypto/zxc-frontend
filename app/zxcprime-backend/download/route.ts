@@ -1,0 +1,231 @@
+import { fetchWithTimeout } from "@/lib/fetch-timeout";
+import { NextRequest, NextResponse } from "next/server";
+import { validateBackendToken } from "@/lib/validate-token";
+export interface VideoLink {
+  id: string;
+  url: string;
+  resolution: number;
+  size: string; // kept as string since API returns it that way
+}
+
+export interface ApiResponse {
+  success: boolean;
+  links: VideoLink[];
+  api_key: string;
+}
+export async function GET(req: NextRequest) {
+  try {
+    const tmdbId = req.nextUrl.searchParams.get("a");
+    const mediaType = req.nextUrl.searchParams.get("b");
+    const season = req.nextUrl.searchParams.get("c");
+    const episode = req.nextUrl.searchParams.get("d");
+    const title = req.nextUrl.searchParams.get("f");
+    const year = req.nextUrl.searchParams.get("g");
+    const ts = Number(req.nextUrl.searchParams.get("gago"));
+    const token = req.nextUrl.searchParams.get("putanginamo")!;
+    const f_token = req.nextUrl.searchParams.get("f_token")!;
+
+    if (!tmdbId || !mediaType || !title || !year || !ts || !token) {
+      return NextResponse.json(
+        { success: false, error: "need token" },
+        { status: 404 },
+      );
+    }
+
+    if (Date.now() - ts > 8000) {
+      return NextResponse.json(
+        { success: false, error: "Invalid token" },
+        { status: 403 },
+      );
+    }
+
+    if (!validateBackendToken(tmdbId, f_token, ts, token)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid token" },
+        { status: 403 },
+      );
+    }
+
+    // block direct /api access
+    const referer = req.headers.get("referer") || "";
+    if (
+      !referer.includes("/api/") &&
+      !referer.includes("localhost") &&
+      !referer.includes("http://192.168.1.4:3000/") &&
+      !referer.includes("https://www.zxcprime.icu/") &&
+      !referer.includes("https://zxcprime.icu/") &&
+      !referer.includes("https://www.zxcprime.site/") &&
+      !referer.includes("https://zxcprime.site/")
+    ) {
+      return NextResponse.json(
+        { success: false, error: "NAH" },
+        { status: 403 },
+      );
+    }
+    // -------- MovieBox Logic --------
+    const randomIP =
+      africanIPs[Math.floor(Math.random() * africanIPs.length)].ip;
+    const host = "h5.aoneroom.com";
+
+    //movieboxapp.in
+    const baseUrl = `https://${host}`;
+    const headers: Record<string, string> = {
+      "X-Client-Info": '{"timezone":"Africa/Nairobi"}',
+      "Accept-Language": "en-US,en;q=0.5",
+      Accept: "application/json",
+      "User-Agent": "okhttp/4.12.0",
+      Referer:
+        "https://fmoviesunblocked.net/spa/videoPlayPage/movies/the-housemaid-0salyuvbRw2?id=2123398053372510440&type=/movie/detail",
+      "X-Forwarded-For": randomIP,
+      "CF-Connecting-IP": randomIP,
+      "X-Real-IP": randomIP,
+      Origin: "https://fmoviesunblocked.net",
+    };
+    // Search for movie/TV show
+    const searchRes = await fetch(
+      `${baseUrl}/wefeed-h5-bff/web/subject/search`,
+      {
+        method: "POST",
+        headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          keyword: title,
+          page: 1,
+          perPage: 24,
+          subjectType: mediaType === "tv" ? 2 : 1,
+        }),
+      },
+    );
+
+    const searchJson = await searchRes.json();
+    const results = searchJson?.data?.data || searchJson?.data || searchJson;
+    const items = results?.items || [];
+    if (!items.length)
+      return NextResponse.json(
+        { success: false, error: "No search results" },
+        { status: 404 },
+      );
+
+    const selectedItem =
+      items.find((i: any) =>
+        (i?.title || "").toLowerCase().includes(title.toLowerCase()),
+      ) || items[0];
+    const subjectId = String(selectedItem?.subjectId);
+    if (!subjectId)
+      return NextResponse.json(
+        { success: false, error: "subjectId not found" },
+        { status: 404 },
+      );
+
+    // Detail info
+    const detailRes = await fetch(
+      `${baseUrl}/wefeed-h5-bff/web/subject/detail?subjectId=${encodeURIComponent(subjectId)}`,
+      { headers },
+    );
+    const detailJson = await detailRes.json();
+    const info = detailJson?.data?.data || detailJson?.data || detailJson;
+    const detailPath = info?.subject?.detailPath || "";
+
+    // Download sources
+    const params = new URLSearchParams({ subjectId });
+    if (mediaType === "tv") {
+      if (season) params.set("se", String(season));
+      if (episode) params.set("ep", String(episode));
+    }
+
+    const sourcesRes = await fetch(
+      `${baseUrl}/wefeed-h5-bff/web/subject/download?${params.toString()}`,
+      {
+        headers: {
+          ...headers,
+          Referer: `https://fmoviesunblocked.net/spa/videoPlayPage/movies/${detailPath}?id=${subjectId}&type=/movie/detail`,
+          Origin: "https://fmoviesunblocked.net",
+        },
+      },
+    );
+
+    const sourcesJson = await sourcesRes.json();
+    const sources = sourcesJson?.data?.data || sourcesJson?.data || sourcesJson;
+    const downloads = sources?.downloads || [];
+    if (!downloads.length)
+      return NextResponse.json(
+        { success: false, error: "No download sources" },
+        { status: 404 },
+      );
+    const proxies = [
+      "https://long-frog-ec4e.coupdegrace21799.workers.dev/",
+      "https://damp-bird-f3a9.jerometecsonn.workers.dev/",
+      "https://damp-bonus-5625.mosangfour.workers.dev/",
+      "https://still-butterfly-9b3e.zxcprime360.workers.dev/",
+    ];
+
+    let workingProxy: string | null = null;
+    for (const d of downloads) {
+      workingProxy = await getWorkingProxy(String(d.url), proxies);
+      if (workingProxy) break;
+    }
+
+    if (!workingProxy) {
+      return NextResponse.json(
+        { success: false, error: "No working proxy available" },
+        { status: 502 },
+      );
+    }
+
+    const proxiedLinks: VideoLink[] = downloads.map((d: any) => ({
+      id: String(d.id),
+      resolution: Number(d.resolution),
+      size: String(d.size),
+      url: `${workingProxy}?url=${encodeURIComponent(String(d.url))}`,
+    }));
+
+    return NextResponse.json({
+      success: true,
+      links: proxiedLinks,
+      api_key: randomIP,
+    });
+  } catch (err: any) {
+    console.error("MovieBox API Error:", err);
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
+const africanIPs = [
+  { ip: "41.90.65.134" },
+  { ip: "41.204.187.92" },
+  { ip: "41.215.122.41" },
+  { ip: "102.89.23.176" },
+  { ip: "102.134.77.58" },
+  { ip: "197.210.54.119" },
+  { ip: "197.211.96.44" },
+  { ip: "105.5.88.201" },
+  { ip: "105.14.201.73" },
+  { ip: "196.33.214.88" },
+  { ip: "196.25.1.142" },
+  { ip: "154.160.44.93" },
+  { ip: "154.160.120.18" },
+  { ip: "41.78.64.55" },
+  { ip: "41.222.188.91" },
+  { ip: "105.158.32.177" },
+  { ip: "197.230.145.66" },
+];
+export async function getWorkingProxy(url: string, proxies: string[]) {
+  for (const proxy of proxies) {
+    try {
+      const testUrl = `${proxy}?url=${encodeURIComponent(url)}`;
+      const res = await fetchWithTimeout(
+        testUrl,
+        {
+          method: "HEAD",
+          headers: {
+            Range: "bytes=0-1",
+          },
+        },
+        3000,
+      );
+      if (res.ok) return proxy;
+    } catch (e) {}
+  }
+  return null;
+}
