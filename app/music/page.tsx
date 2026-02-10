@@ -23,7 +23,7 @@ export default function MusicSearch() {
 
       {/* Player */}
       {source?.data?.manifest && (
-        <div className="fixed bottom-0 inset-x-0 p-4 bg-background/80 backdrop-blur-lg">
+        <div className="fixed bottom-0 inset-x-0 py-8 px-8 bg-background/80 backdrop-blur-lg">
           <AudioPlayer
             manifestBase64={source.data.manifest}
             manifestMimeType={source.data.manifestMimeType}
