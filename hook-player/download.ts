@@ -22,6 +22,7 @@ export default function useDownload({
   imdbId,
   title,
   year,
+  trigger,
 }: {
   media_type: string;
   id: number;
@@ -30,6 +31,7 @@ export default function useDownload({
   imdbId: string | null;
   title: string;
   year: string;
+  trigger: boolean;
 }) {
   const query = useQuery<ProxiedApiResponse>({
     queryKey: [
@@ -43,6 +45,7 @@ export default function useDownload({
       year,
     ],
     enabled:
+      trigger &&
       !!id &&
       !!imdbId &&
       (media_type === "movie" ||

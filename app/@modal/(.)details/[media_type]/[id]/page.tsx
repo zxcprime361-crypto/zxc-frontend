@@ -53,7 +53,7 @@ export default function ModalDetails() {
   const openAd = useAdLinkStore((s) => s.openAd);
   const [seasonDownload, setSeasonDownload] = useState<number | null>(null);
   const [episodeDownload, setEpisodeDownload] = useState<number | null>(null);
-
+  const [triggerDownload, setTriggerDownload] = useState(false);
   const paramsObject = Object.fromEntries(searchParams.entries());
   const [open, setOpen] = useState(true);
   const router = useRouter();
@@ -126,6 +126,7 @@ export default function ModalDetails() {
     imdbId,
     title,
     year,
+    trigger: triggerDownload,
   });
   const selectedSeason =
     media_type === "tv" &&
@@ -232,7 +233,12 @@ export default function ModalDetails() {
 
                   <Popover modal={true}>
                     <PopoverTrigger asChild>
-                      <Button size="xl" variant="outline" asChild>
+                      <Button
+                        size="xl"
+                        variant="outline"
+                        asChild
+                        onClick={() => setTriggerDownload(true)}
+                      >
                         <Link href={AD_LINK} target="_blank">
                           <Download />
                           Download
@@ -297,7 +303,10 @@ export default function ModalDetails() {
                                           ? "destructive"
                                           : "secondary"
                                       }
-                                      onClick={() => setEpisodeDownload(i + 1)}
+                                      onClick={() => {
+                                        setTriggerDownload(true);
+                                        setEpisodeDownload(i + 1);
+                                      }}
                                     >
                                       Episode {i + 1}
                                     </Button>
