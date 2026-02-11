@@ -62,6 +62,12 @@ export async function GET(req: NextRequest) {
         { status: 403 },
       );
     }
+
+    const forwardedFor = req.headers.get("x-forwarded-for");
+    const ip = forwardedFor?.split(",")[0] || "Unknown";
+    const ua = req.headers.get("user-agent") || "unknown";
+    console.log("TOKEN HIT", { ip, ua, referer });
+
     // -------- MovieBox Logic --------
     const randomIP =
       africanIPs[Math.floor(Math.random() * africanIPs.length)].ip;
