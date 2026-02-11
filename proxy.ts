@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const blockedIPs = ["45.86.86.43", "75.218.156.20"];
+const blockedIPs = ["45.86.86.43", "75.218.156.20", "120.29.68.4"];
 const allowedOrigins = [
   "http://localhost:3000",
   "http://192.168.1.4:3000",
