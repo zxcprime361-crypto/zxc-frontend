@@ -82,7 +82,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
           enableSystem={false}
           disableTransitionOnChange
         >
-          <ChangeLogs />
+          {/* <ChangeLogs /> */}
           {(search || isMobile) && <SearchModal />}
           {/* <Navigation setSearch={setSearch} search={search} /> */}
           <NavBar />
