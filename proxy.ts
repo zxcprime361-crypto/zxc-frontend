@@ -53,21 +53,25 @@ const allowedOrigins = [
   "https://zxcprime.site",
 ];
 
-// In-memory rate limit store
-const rateLimitMap = new Map<string, { count: number; last: number }>();
-const RATE_LIMIT = 10; // Max requests
-const WINDOW_MS = 5000; // per 5 seconds
+// Rate limit store
+const rateLimitMap = new Map<
+  string,
+  { timestamps: number[] } // store request timestamps
+>();
+
+const RATE_LIMIT = 10; // max requests
+const WINDOW_MS = 5000; // 5 seconds
 
 export async function proxy(req: NextRequest) {
-  // Get client IP
-  const forwardedFor = req.headers.get("x-forwarded-for");
-  const realIP = req.headers.get("x-real-ip");
-  const ip = forwardedFor?.split(",")[0]?.trim() || realIP || "unknown";
+  const forwardedFor = req.headers.get("x-forwarded-for") || "";
+  const realIP = req.headers.get("x-real-ip") || "";
+  const ip = forwardedFor.split(",")[0].trim() || realIP || "unknown";
 
   const ua = req.headers.get("user-agent") || "unknown";
   const origin = req.headers.get("origin") || "";
 
-  console.log("middleware hit", { ip, ua, origin, path: req.nextUrl.pathname });
+  const path = req.nextUrl.pathname;
+  console.log("middleware hit", { ip, ua, origin, path });
 
   // 1️⃣ Block specific IPs
   if (blockedIPs.includes(ip)) {
@@ -83,28 +87,26 @@ export async function proxy(req: NextRequest) {
     return new NextResponse("Forbidden", { status: 403 });
   }
 
-  // 3️⃣ Apply rate limit only on /details path
-  if (req.nextUrl.pathname.startsWith("/details")) {
+  // 3️⃣ Rate limit only for /details
+  if (path.startsWith("/details")) {
     const now = Date.now();
-    const entry = rateLimitMap.get(ip) || { count: 0, last: now };
+    const entry = rateLimitMap.get(ip) || { timestamps: [] };
 
-    if (now - entry.last > WINDOW_MS) {
-      // Reset window
-      entry.count = 1;
-      entry.last = now;
-    } else {
-      // Increment counter
-      entry.count++;
-    }
+    // Remove old timestamps outside window
+    entry.timestamps = entry.timestamps.filter((t) => now - t < WINDOW_MS);
 
+    // Add current request timestamp
+    entry.timestamps.push(now);
+
+    // Save back
     rateLimitMap.set(ip, entry);
 
-    if (entry.count > RATE_LIMIT) {
+    if (entry.timestamps.length > RATE_LIMIT) {
       console.log("Rate limit exceeded for IP:", ip, ua);
       return new NextResponse("Too many requests", { status: 429 });
     }
   }
 
-  // ✅ Allow request to continue
+  // ✅ Allow request
   return NextResponse.next();
 }
