@@ -45,10 +45,8 @@ export async function POST(req: NextRequest) {
   }
 
   if (blockedIPs.includes(ip)) {
-    return NextResponse.json(
-      { success: false, error: "Internal Server Error" },
-      { status: 500 },
-    );
+    console.log("Blocked IP tried to access:", ip, ua);
+    return new Response(null, { status: 403 });
   }
 
   if (!validateFrontendToken(f_token, id, ts)) {
