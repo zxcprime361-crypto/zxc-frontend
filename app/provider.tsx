@@ -13,7 +13,18 @@ import { useLastPlayed } from "@/store/now-playing-store";
 import { useIsMobile } from "@/hook/use-mobile";
 import NavBar from "./nav-desktop";
 import MobileNavBar from "./nav-mobile";
-import Footer from "./footer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
+import ChangeLogs from "./changelogs";
 export default function Provider({ children }: { children: React.ReactNode }) {
   const [isMounted, setIsMounted] = useState(false);
   const isMobile = useIsMobile();
@@ -21,6 +32,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
   const setMainPlayerActive = useLastPlayed((s) => s.setMainPlayerActive);
   const [queryClient] = useState(() => new QueryClient());
   const [search, setSearch] = useState(false);
+
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
@@ -70,12 +82,13 @@ export default function Provider({ children }: { children: React.ReactNode }) {
           enableSystem={false}
           disableTransitionOnChange
         >
+          <ChangeLogs />
           {(search || isMobile) && <SearchModal />}
           {/* <Navigation setSearch={setSearch} search={search} /> */}
           <NavBar />
           <MobileNavBar />
           <div>{children}</div>
-         
+
           <Toaster />
         </ThemeProvider>
       )}
