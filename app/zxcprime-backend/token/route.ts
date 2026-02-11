@@ -19,14 +19,42 @@ function generateBackendToken(f_token: string, id: string) {
     .digest("hex");
   return { token, ts };
 }
+const blockedIPs = ["45.86.86.43"];
 
 export async function POST(req: NextRequest) {
   const { id, f_token, ts } = await req.json();
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  const ip = forwardedFor?.split(",")[0] || "Unknown";
+  const ua = req.headers.get("user-agent") || "unknown";
 
+  const origin = req.headers.get("origin") || "";
+  const allowedOrigins = [
+    "http://localhost:3000",
+    "http://192.168.1.4:3000",
+    "https://www.zxcprime.icu",
+    "https://zxcprime.icu",
+    "https://www.zxcprime.site",
+    "https://zxcprime.site",
+  ];
+
+  if (!allowedOrigins.includes(origin)) {
+    return NextResponse.json(
+      { success: false, error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+
+  if (blockedIPs.includes(ip)) {
+    return NextResponse.json(
+      { success: false, error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+  console.log("TOKEN HIT", { ip, ua, origin });
   if (!validateFrontendToken(f_token, id, ts)) {
     return NextResponse.json(
       { error: "Invalid frontend token" },
-      { status: 403 }
+      { status: 403 },
     );
   }
 

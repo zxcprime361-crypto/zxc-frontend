@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     const ts = Number(req.nextUrl.searchParams.get("gago"));
     const token = req.nextUrl.searchParams.get("putanginamo")!;
     const f_token = req.nextUrl.searchParams.get("f_token")!;
-    const blockedIPs = ["45.86.86.43"];
+
     if (!tmdbId || !mediaType || !title || !year || !ts || !token) {
       return NextResponse.json(
         { success: false, error: "need token" },
@@ -62,15 +62,6 @@ export async function GET(req: NextRequest) {
         { status: 403 },
       );
     }
-
-    const forwardedFor = req.headers.get("x-forwarded-for");
-    const ip = forwardedFor?.split(",")[0] || "Unknown";
-    const ua = req.headers.get("user-agent") || "unknown";
-
-    if (blockedIPs.includes(ip)) {
-      return new NextResponse("Forbidden", { status: 403 });
-    }
-    console.log("TOKEN HIT", { ip, ua, referer });
     // -------- MovieBox Logic --------
     const randomIP =
       africanIPs[Math.floor(Math.random() * africanIPs.length)].ip;
