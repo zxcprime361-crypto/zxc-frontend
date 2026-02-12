@@ -55,7 +55,9 @@ const allowedOrigins = [
   "https://www.zxcprime.site",
   "https://zxcprime.site",
 ];
-
+const blockedUAs = [
+  "Mozilla/5.0 (X11; CrOS x86_64 14541.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+];
 export async function proxy(req: NextRequest) {
   const origin = req.headers.get("origin") || "";
   const forwardedFor = req.headers.get("x-forwarded-for");
@@ -69,7 +71,11 @@ export async function proxy(req: NextRequest) {
     console.log("Blocked IP tried to access:", ip, ua);
     return new NextResponse("Forbidden", { status: 403 });
   }
-
+  // 2️⃣ Block suspicious User-Agents
+  if (blockedUAs.some((blocked) => ua.includes(blocked))) {
+    console.log("Blocked UA tried to access:", ua, ip);
+    return new NextResponse("Forbidden", { status: 403 });
+  }
   // 2️⃣ Validate origin
   const allowed =
     origin === "" || allowedOrigins.some((url) => origin.includes(url));
