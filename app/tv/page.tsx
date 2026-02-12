@@ -4,8 +4,6 @@ import { useSearchParams } from "next/navigation";
 import SearchResult from "../search-components/search-results";
 import { shuffleArray } from "@/lib/shuffle";
 import { useMemo } from "react";
-
-import FeaturesSectionTV from "@/components/ui/landing-selection";
 import LandingSelection from "@/components/ui/landing-selection";
 
 export default function Movies() {

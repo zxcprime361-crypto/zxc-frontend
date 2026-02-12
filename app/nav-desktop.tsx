@@ -24,7 +24,9 @@ import SearchModal from "./search-components/search-modal";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import InstallButton from "@/components/ui/install";
+import { useState } from "react";
 export default function NavBar() {
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
   return (
     <header className="fixed top-0 inset-x-0  z-10 bg-linear-to-b from-background/90 to-transparent rounded-b-md hidden lg:block">
@@ -42,7 +44,7 @@ export default function NavBar() {
               <span className=" font-medium">Home</span>
             </Link>
           </button>
-          <Popover>
+          <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger
               asChild
               className={
@@ -92,6 +94,7 @@ export default function NavBar() {
 
               <div className="py-2 space-y-1">
                 <Link
+                  onClick={() => setOpen(false)}
                   href="/movie"
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200 ${
                     pathname === "/movie"
@@ -107,6 +110,7 @@ export default function NavBar() {
                 </Link>
 
                 <Link
+                  onClick={() => setOpen(false)}
                   href="/tv"
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200 ${
                     pathname === "/tv"
@@ -122,6 +126,7 @@ export default function NavBar() {
                 </Link>
 
                 <Link
+                  onClick={() => setOpen(false)}
                   href="/collection"
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200 ${
                     pathname === "/collection"
@@ -139,6 +144,7 @@ export default function NavBar() {
                 <div className="h-px bg-border my-2" />
 
                 <Link
+                  onClick={() => setOpen(false)}
                   href="/watchlist"
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200 ${
                     pathname === "/watchlist"
@@ -154,6 +160,7 @@ export default function NavBar() {
                 </Link>
 
                 <Link
+                  onClick={() => setOpen(false)}
                   href="/history"
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200 ${
                     pathname === "/history"
@@ -170,23 +177,25 @@ export default function NavBar() {
               </div>
             </PopoverContent>
           </Popover>{" "}
-          <button
+          {/* <button
             className={
               pathname === "/explore" ? "text-foreground font-semibold" : ""
             }
           >
             <Link
+              onClick={() => setOpen(false)}
               className={`hidden items-center gap-1.5 xl:flex`}
               href="/explore"
             >
               <Telescope className="size-5" />
               <span className=" font-medium">Explore</span>
             </Link>
-          </button>
+          </button> */}
           <button
             className={`relative ${pathname === "/music" ? "text-foreground font-semibold" : ""}`}
           >
             <Link
+              onClick={() => setOpen(false)}
               className={`hidden items-center gap-1.5 xl:flex`}
               href="/music"
             >
@@ -199,6 +208,7 @@ export default function NavBar() {
           </button>
           <button>
             <Link
+              onClick={() => setOpen(false)}
               className={`hidden items-center gap-1.5 xl:flex`}
               href="https://zxcstream.xyz"
               target="_blank"
@@ -210,7 +220,11 @@ export default function NavBar() {
           <button
             className={`xl:block hidden ${pathname === "/settings" ? "text-foreground font-semibold" : ""}`}
           >
-            <Link href="/settings" className="flex items-center gap-1.5">
+            <Link
+              onClick={() => setOpen(false)}
+              href="/settings"
+              className="flex items-center gap-1.5"
+            >
               <Settings className="size-5" />
               <span className=" font-medium">Settings</span>
             </Link>

@@ -12,17 +12,26 @@ import SkeletonCard1 from "@/components/ui/movie-card-skeleton-1";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { useLayoutDensity } from "@/store/useLayoutDensity";
 import { GRID_CONFIG } from "@/lib/layout-density";
-import { Tabs } from "@/components/ui/vercel";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 export default function BrowseTmdb({
   media_type = "movie",
+  parameter,
 }: {
   media_type: "movie" | "tv";
+  parameter: string;
 }) {
   const { ref, inView } = useInView({
     threshold: 0.1, // triggers when 50% visible
   });
   const [selectedMedia] = useState<"movie" | "tv">(media_type);
-  const [tab, setTab] = useState("popular");
+  const [tab, setTab] = useState(parameter);
   const tabs = [
     { id: "trending", label: "Trending", endpoint: "discover" },
     { id: "popular", label: "Popular", endpoint: "discover" },
@@ -51,7 +60,7 @@ export default function BrowseTmdb({
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetDiscoverInfinite<MovieTypes>({
       endpoint,
-      media_type: isTrending ? `${selectedMedia}/day` : selectedMedia,
+      media_type: selectedMedia,
       params: {
         ...(tab === "popular" && { sort_by: "popularity.desc" }),
         ...(tab === "top_rated" && {
@@ -139,13 +148,30 @@ export default function BrowseTmdb({
   }, [inView, hasNextPage, fetchNextPage]);
 
   return (
-    <div className=" space-y-2 py-10 mx-auto lg:w-[85%] w-[95%] min-h-screen">
-      <div className="overflow-x-auto overflow-hidden custom-scrollbar pb-2 mb-6">
-        <Tabs tabs={tabs} onTabChange={(tabId) => setTab(tabId)} />
+    <div className=" space-y-2 py-25 mx-auto lg:w-[85%] w-[95%] min-h-screen">
+      <div className="mb-2">
+        <Breadcrumb>
+          <BreadcrumbList className="p-0.5">
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/${media_type}`}>
+                {media_type === "movie" ? "Movie" : "TV Show"}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{tab}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <h1 className=" uppercase  mask-[linear-gradient(to_bottom,black_0%,transparent_85%)] lg:text-6xl text-5xl font-bold text-red-600  lg:tracking-tight translate-y-2">
+          {tab}
+        </h1>
       </div>
-      <h1 className=" uppercase  mask-[linear-gradient(to_bottom,black_0%,transparent_85%)] lg:text-6xl text-4xl font-bold text-red-700  translate-y-3 lg:tracking-tight ">
-        {tab}
-      </h1>
       <div className={`grid ${GRID_CONFIG[density]}`}>
         {isLoading ? (
           [...Array(7)].map((_, i) => <SkeletonCard1 key={i} />)

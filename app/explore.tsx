@@ -67,12 +67,18 @@ import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { useLayoutDensity } from "@/store/useLayoutDensity";
 import { GRID_CONFIG } from "@/lib/layout-density";
 import { Badge } from "@/components/ui/badge";
-export default function ExploreTmdb() {
+export default function ExploreTmdb({
+  media_type,
+}: {
+  media_type: "movie" | "tv";
+}) {
   const isMobile = useIsMobile();
   const { ref, inView } = useInView({
     threshold: 0.1, // triggers when 50% visible
   });
-  const [selectedMedia, setSelectedMedia] = useState<"movie" | "tv">("movie");
+  const [selectedMedia, setSelectedMedia] = useState<"movie" | "tv">(
+    media_type,
+  );
   const [selectedGenres, setSelectedGenres] = useState<Set<number>>(new Set());
   const [selectedNetwork, setSelectedNetwork] = useState<number | null>(null);
   const [expandYear, setExpandYear] = useState(false);
@@ -271,8 +277,8 @@ export default function ExploreTmdb() {
   return (
     <div className=" space-y-2 lg:py-25 py-15 mx-auto lg:w-[85%] w-[95%]">
       <div className="space-y-4 py-4">
-        <div className="flex justify-between items-end ">
-          <Select
+        <div className="flex justify-end items-end ">
+          {/* <Select
             value={selectedMedia}
             onValueChange={(value) => setSelectedMedia(value as "movie" | "tv")}
           >
@@ -285,7 +291,7 @@ export default function ExploreTmdb() {
                 <SelectItem value="tv">TV Show</SelectItem>
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
           <div className="flex items-center gap-2">
             <Select value={sort} onValueChange={setSort}>
               <SelectTrigger>

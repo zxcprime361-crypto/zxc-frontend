@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     });
 
     const tmdbRes = await fetch(
-      `https://api.themoviedb.org/3/${endpoint}/${media_type}?${tmdbParams.toString()}`,
+      `https://api.themoviedb.org/3/${endpoint}/${media_type}${endpoint === "trending" ? "/day" : ""}?${tmdbParams.toString()}`,
       { next: { revalidate: 300 } },
     );
 
