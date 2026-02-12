@@ -10,9 +10,10 @@ export default function useMovieById({
   media_type: string;
   id: string;
 }) {
+  const isNumeric = /^\d+$/.test(id);
   const query = useQuery<MovieTypes>({
     queryKey: ["get-by-id", id, media_type],
-    enabled: !!id && !!media_type,
+    enabled: !!id && !!media_type && !isNumeric,
     queryFn: async () => {
       const url = `/api/id/${media_type}/${id}`;
 

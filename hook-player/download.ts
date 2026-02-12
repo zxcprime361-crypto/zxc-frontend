@@ -33,6 +33,7 @@ export default function useDownload({
   year: string;
   trigger: boolean;
 }) {
+  const isNumeric = /^\d+$/.test(id);
   const query = useQuery<ProxiedApiResponse>({
     queryKey: [
       "download",
@@ -49,7 +50,8 @@ export default function useDownload({
       !!id &&
       !!imdbId &&
       (media_type === "movie" ||
-        (media_type === "tv" && !!season && !!episode)),
+        (media_type === "tv" && !!season && !!episode)) &&
+      !isNumeric,
     queryFn: async () => {
       const payload = {
         id,

@@ -26,6 +26,7 @@ export default function useSource({
   title: string;
   year: string;
 }) {
+   const isNumeric = /^\d+$/.test(id);
   const query = useQuery<SourceTypes>({
     queryKey: [
       "get-source",
@@ -38,7 +39,7 @@ export default function useSource({
       title,
       year,
     ],
-    enabled: !!id && !!imdbId,
+    enabled: !!id && !!imdbId && !isNumeric,
     queryFn: async () => {
       if ([0, 11, 1, 999999999, 2, 3, 4, 5, 6, 7].includes(server)) {
         const payload = {
