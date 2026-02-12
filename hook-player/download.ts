@@ -25,7 +25,7 @@ export default function useDownload({
   trigger,
 }: {
   media_type: string;
-  id: number;
+  id: string;
   season: number | null;
   episode: number | null;
   imdbId: string | null;

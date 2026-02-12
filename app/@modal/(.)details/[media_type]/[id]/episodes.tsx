@@ -11,7 +11,7 @@ import "ldrs/react/Tailspin.css";
 import TitleReusable from "@/components/ui/title";
 import Link from "next/link";
 import { useLastPlayed } from "@/store/now-playing-store";
-export default function Episodes({ id }: { id: number }) {
+export default function Episodes({ id }: { id: string }) {
   const { getSeasonSelect } = useSeasonStore();
   const { activateSpoiler, setActivateSpoiler } = useSpoilerStore();
 

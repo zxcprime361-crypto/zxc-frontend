@@ -18,7 +18,7 @@ export default function useSource({
   year,
 }: {
   media_type: string;
-  id: number;
+  id: string;
   season: number;
   episode: number;
   imdbId: string | null;
@@ -40,22 +40,21 @@ export default function useSource({
     ],
     enabled: !!id && !!imdbId,
     queryFn: async () => {
-      if ([0, 1, 999999999, 2, 3, 4, 5, 6, 7].includes(server)) {
-        const { f_token, f_ts } = generateFrontendToken(String(id));
-
-        const tokenRes = await axios.post("/api/token", {
+      if ([0, 11, 1, 999999999, 2, 3, 4, 5, 6, 7].includes(server)) {
+        const payload = {
           id,
-          f_token,
-          ts: f_ts,
-        });
-        const { ts, token } = tokenRes.data;
+          media_type,
+          season,
+          episode,
+          imdbId,
+          title,
+          year,
+        };
+        const tokenRes = await axios.post("/zxcprime-backend/token", payload);
+        const { token, signature } = tokenRes.data;
 
         const res = await axios.get(
-          `/api/${server}?a=${id}&b=${media_type}${
-            media_type === "tv" ? `&c=${season}&d=${episode}` : ""
-          }${
-            imdbId !== null ? `&e=${imdbId}` : ""
-          }&gago=${ts}&putanginamo=${token}&f_token=${f_token}&f=${title}&g=${year}`,
+          `/zxcprime-backend/${server}?data=${encodeURIComponent(token)}&sig=${signature}`,
         );
 
         return res.data;

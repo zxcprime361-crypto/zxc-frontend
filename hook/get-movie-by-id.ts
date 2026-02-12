@@ -8,13 +8,13 @@ export default function useMovieById({
   id,
 }: {
   media_type: string;
-  id: number;
+  id: string;
 }) {
   const query = useQuery<MovieTypes>({
     queryKey: ["get-by-id", id, media_type],
     enabled: !!id && !!media_type,
     queryFn: async () => {
-      const url = `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${process.env.NEXT_PUBLIC_TMDB_KEY}&language=en-US&append_to_response=credits,images,videos,recommendations,reviews,translations,external_ids`;
+      const url = `/api/id/${media_type}/${id}`;
 
       try {
         const res = await axios.get(url);

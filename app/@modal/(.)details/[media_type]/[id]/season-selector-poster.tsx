@@ -16,7 +16,7 @@ export default function SeasonSelectorPoster({
   id,
 }: {
   seasons: Season[];
-  id: number;
+  id: string;
 }) {
 
   const { setSeasonSelect, getSeasonSelect } = useSeasonStore();

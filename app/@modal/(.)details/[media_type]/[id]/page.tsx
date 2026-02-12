@@ -58,7 +58,7 @@ export default function ModalDetails() {
   const [open, setOpen] = useState(true);
   const router = useRouter();
   const params = useParams();
-  const id = Number(params.id);
+  const id = String(params.id);
   const media_type = String(params.media_type);
   const query = useMovieById({ id, media_type });
   const handleCloseDrawer = (value: boolean) => {

@@ -6,9 +6,9 @@ type SeasonSelect = {
 };
 
 type SeasonState = {
-  seasonSelect: Record<number, SeasonSelect>;
-  setSeasonSelect: (showId: number, v: SeasonSelect) => void;
-  getSeasonSelect: (showId: number) => SeasonSelect | undefined;
+  seasonSelect: Record<string, SeasonSelect>;
+  setSeasonSelect: (showId: string, v: SeasonSelect) => void;
+  getSeasonSelect: (showId: string) => SeasonSelect | undefined;
 };
 
 export const useSeasonStore = create<SeasonState>((set, get) => ({

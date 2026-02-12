@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 // --- Types ---
 interface VideoProgress {
-  id: number;
+  id: string;
   title: string;
   media_type: string;
   backdrop: string;
@@ -21,7 +21,7 @@ interface VideoProgressState {
     key: string,
     currentTime: number,
     duration: number,
-    id: number,
+    id: string,
     title: string,
     media_type: string,
     backdrop: string,
@@ -36,7 +36,7 @@ interface VideoProgressState {
 
 const makeKey = (
   media_type: "movie" | "tv",
-  id: number,
+  id: string,
   season?: number,
   episode?: number,
 ) => {

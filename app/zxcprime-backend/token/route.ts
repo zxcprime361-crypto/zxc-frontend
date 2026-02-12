@@ -1,61 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 
-const SECRET = process.env.API_SECRET || "supersecret123";
-
-function validateFrontendToken(f_token: string, id: string, ts: number) {
-  const expected = crypto
-    .createHash("sha256")
-    .update(`${id}:${ts}`)
-    .digest("hex");
-  return expected === f_token && Date.now() - ts < 5000;
-}
-
-function generateBackendToken(f_token: string, id: string) {
-  const ts = Date.now();
-  const token = crypto
-    .createHmac("sha256", SECRET)
-    .update(`${id}:${f_token}:${ts}`)
-    .digest("hex");
-  return { token, ts };
-}
-const blockedIPs = ["45.86.86.43"];
+const SECRET =
+  process.env.API_SECRET ||
+  "G9v!r7Xq2#kPz8&Lf5@bD3sW1^mT0yH4*eJ6uC8$QnVwR2+ZpF7!aL9xS3";
 
 export async function POST(req: NextRequest) {
-  const { id, f_token, ts } = await req.json();
-  const forwardedFor = req.headers.get("x-forwarded-for");
-  const ip = forwardedFor?.split(",")[0] || "Unknown";
-  const ua = req.headers.get("user-agent") || "unknown";
+  const id = await req.json(); // directly the object
+  const ts = Date.now();
+  const data = JSON.stringify({ ...id, ts });
 
-  const origin = req.headers.get("origin") || "";
-  const allowedOrigins = [
-    "http://localhost:3000",
-    "http://192.168.1.4:3000",
-    "https://www.zxcprime.icu",
-    "https://zxcprime.icu",
-    "https://www.zxcprime.site",
-    "https://zxcprime.site",
-  ];
-  console.log("TOKEN HIT", { ip, ua, origin });
-  if (!allowedOrigins.includes(origin)) {
-    return NextResponse.json(
-      { success: false, error: "Internal Server Error" },
-      { status: 500 },
-    );
-  }
+  const signature = crypto
+    .createHmac("sha256", SECRET)
+    .update(data)
+    .digest("hex");
 
-  if (blockedIPs.includes(ip)) {
-    console.log("Blocked IP tried to access:", ip, ua);
-    return new Response(null, { status: 403 });
-  }
+  const token = Buffer.from(data).toString("base64");
 
-  if (!validateFrontendToken(f_token, id, ts)) {
-    return NextResponse.json(
-      { error: "Invalid frontend token" },
-      { status: 403 },
-    );
-  }
-
-  const b_token = generateBackendToken(f_token, id);
-  return NextResponse.json(b_token);
+  return NextResponse.json({ token, signature });
 }

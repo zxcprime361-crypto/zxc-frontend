@@ -51,7 +51,7 @@ import { useSubtitleUrl } from "@/hook-player/subtitle";
 export default function Player() {
   const { params } = useParams();
   const media_type = String(params?.[0]);
-  const id = Number(params?.[1]);
+  const id = String(params?.[1]);
   const season = Number(params?.[2]) || 1;
   const episode = Number(params?.[3]) || 1;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -75,7 +75,7 @@ export default function Player() {
     media_type,
     id,
   });
-
+  const zxcprimeId = obscure(metadata?.backdrop_path || "");
   const title = metadata?.title || metadata?.name || "";
   const date = metadata?.release_date ?? metadata?.first_air_date;
   const backdrop =
@@ -1299,3 +1299,9 @@ const childVariants = {
   hover: { opacity: 1 },
   initial: { opacity: 0 },
 };
+function obscure(str: string) {
+  return str
+    .split("")
+    .map((c) => c.charCodeAt(0)) // convert to ASCII number
+    .join("x"); // insert x between numbers
+}

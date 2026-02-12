@@ -29,7 +29,7 @@ export function useServerManager({
 }: {
   containerRef: RefObject<HTMLDivElement | null>;
   media_type: string;
-  id: number;
+  id: string;
   season: number;
   episode: number;
   imdbId: string | null;

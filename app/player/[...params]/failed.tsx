@@ -11,7 +11,7 @@ export default function Failed({
   handleRefreshServers,
 }: {
   media_type: string;
-  id: number;
+  id: string;
   season: number;
   episode: number;
   handleRefreshServers: () => void;

@@ -1,37 +1,37 @@
 "use client";
 import axios from "axios";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/lib/debounder";
+
 export interface ReusableSwiperTypes {
   query: string | null;
   media_type: string;
 }
+
 interface TMDBResponse<T> {
   page: number;
   total_pages: number;
   total_results: number;
   results: T[];
 }
+
 export default function useSearch<T>({
   query,
   media_type,
 }: ReusableSwiperTypes) {
   const debounced = useDebounce(query, 300);
+
   return useInfiniteQuery<TMDBResponse<T>>({
     queryKey: ["search_infinite", debounced, media_type],
     enabled: !!query,
     initialPageParam: 1,
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await axios.get(
-        `https://api.themoviedb.org/3/search/${media_type}?query=${debounced}&page=${pageParam}&language=en-US`,
-        {
-          params: {
-            api_key: process.env.NEXT_PUBLIC_TMDB_KEY,
-            page: pageParam,
-          },
+      const res = await axios.get(`/api/search/${media_type}`, {
+        params: {
+          query: debounced,
+          page: pageParam,
         },
-      );
-
+      });
       return res.data;
     },
     getNextPageParam: (lastPage) => {

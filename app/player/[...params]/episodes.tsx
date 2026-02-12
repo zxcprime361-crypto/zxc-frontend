@@ -28,7 +28,7 @@ export default function Episodes({
   server,
   autoPlay,
 }: {
-  id: number;
+  id: string;
   season: number;
   episode: number;
   metadata: MovieTypes;

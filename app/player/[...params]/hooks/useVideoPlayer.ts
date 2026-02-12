@@ -14,7 +14,7 @@ export function useVideoPlayer({
   backdrop,
 }: {
   videoRef: React.RefObject<HTMLVideoElement | null>;
-  id: number;
+  id: string;
   media_type: string;
   season: number;
   episode: number;

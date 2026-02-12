@@ -7,7 +7,7 @@ export function useTvSeason({
   season_number,
   media_type,
 }: {
-  id: number;
+  id: string;
   season_number?: number;
   media_type: string;
 }) {

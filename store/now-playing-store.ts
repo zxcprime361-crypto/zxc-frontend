@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 interface LastPlayedState {
-  lastId: number | null;
+  lastId: string | null;
   media_type: string | null;
   season: number | null;
   episode: number | null;
@@ -10,7 +10,7 @@ interface LastPlayedState {
   isMainPlayerActive: boolean;
 
   setLastPlayed: (data: {
-    id: number;
+    id: string;
     media_type: string;
     season?: number;
     episode?: number;
