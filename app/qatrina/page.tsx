@@ -232,21 +232,14 @@ export default function ValentinesWebsite() {
 
   const letters = [
     {
-      title: "Para sa Aking Isa at Nag-iisang Baby",
+      title: "Valentine's Letter",
       locked: false,
-      date: "Araw ng mga Puso 2026",
-      content: `Aking Minamahal,
+      date: "Valentine's Day",
+      content: `Hindi ako mahilig sa sulat, pero dahil love kita gusto ko lang malaman mo kung gaano ako ka-thankful na dumating ka sa buhay ko. Kayo ni Breanna, mas naging motivated ako.
 
-Naalala ko pa ang unang beses kitang nakita. Parang huminto ang oras, at alam kong hindi na magiging pareho ang buhay ko. Simula noon, bawat araw ay isang pakikipagsapalaran, kagalakan, at biyaya.
+Salamat kasi lagi mo akong iniintindi kahit sobrang kupal ko na minsan hahaha, at sobrang naa-appreciate ko ‘yon.
 
-Tinuruan mo ako kung ano ang tunay na pagmamahal at paano mahalin at mahalin ng taos-puso. Ipinakita mo sa akin na ang tahanan ay hindi lugar—tao ang tahanan. At ikaw ang aking tahanan.
-
-Salamat sa iyong pasensya, kabaitan, tawa, at pagmamahal. Salamat sa pagpili sa akin araw-araw.
-
-Mahal na mahal kita, higit pa sa kayang ipahayag ng mga salita, at pangako kong gugugulin ko ang buong buhay ko para ipakita kung gaano kita kamahal.
-
-Magpakailanman sa’yo,
-Ang Iyong Mahal 💕`,
+I love you so much, baby ko 😘`,
     },
     {
       title: "Birthday Message",
